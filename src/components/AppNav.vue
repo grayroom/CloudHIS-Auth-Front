@@ -34,11 +34,11 @@
             <span class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400" ref="useremail"></span>
           </div>
           <ul v-if="is_login" class="py-1" aria-labelledby="user-menu-button">
-            <li>
-              <a
+            <li @click="toggleUserMenu">
+              <router-link to="/auth/home/info"
                 class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                 정보수정
-              </a>
+              </router-link>
             </li>
             <li>
               <a class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
@@ -49,7 +49,7 @@
           </ul>
           <ul v-else class="py-1" aria-labelledby="user-menu-button">
             <li @click="toggleUserMenu">
-              <router-link to="/auth/login"
+              <router-link to="/auth/home/login"
                 class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                 로그인
               </router-link>
@@ -117,7 +117,7 @@ export default {
       var refreshToken = Cookies.get('refresh')
       var accessToken = Cookies.get('access')
 
-      axios.post('/auth/api/logout/',
+      axios.post('/auth/api/user/logout/',
         JSON.stringify({
           "refresh": refreshToken
         }, {
@@ -126,7 +126,7 @@ export default {
           credentials: "access",
           headers: {
             // Authorization: "Bearer " + Cookies.get('access')
-            Authorization: accessToken
+            Authorization: accessToken,
           }
         })
       )
@@ -145,15 +145,13 @@ export default {
     },
 
     getUserinfo(accessToken) {
-      axios.post('/auth/api/info/',
-        {},
+      axios.get('/auth/api/user/info/',
         {
           withCredentials: true,
           crossDomain: true,
           credentials: "access",
           headers: {
-            // Authorization: "Bearer " + Cookies.get('access')
-            Authorization: accessToken
+            Authorization: "Bearer " + accessToken,
           }
         })
         .then((response) => {
@@ -179,22 +177,23 @@ export default {
     $route(to, from) {
       this.is_login = false
 
-      if (to.path != from.path)
+      if (to.path !== from.path)
         console.log('route changed')
-      var accessToken = Cookies.get('access')
-      var refreshToken = Cookies.get('refresh')
+      const accessToken = Cookies.get('access');
+      const refreshToken = Cookies.get('refresh');
 
-      if (accessToken == undefined || refreshToken == undefined) {
+      if (accessToken === undefined || refreshToken === undefined) {
         this.$refs.username.innerHTML = "로그인이 필요합니다."
         this.$refs.useremail.innerHTML = ""
+        this.is_login = false
         Cookies.remove('access')
         Cookies.remove('refresh')
       } else {
         this.is_login = true
 
-        var accessTokenJSON = JSON.parse(atob(accessToken.split('.')[1]))
+        const accessTokenJSON = JSON.parse(atob(accessToken.split('.')[1]));
         if (new Date(accessTokenJSON.exp * 1000) < new Date()) {
-          axios.post('auth/api/token/refresh/',
+          axios.post('/auth/api/token/refresh/',
             JSON.stringify({
               "refresh": refreshToken
             }),
@@ -212,6 +211,7 @@ export default {
               Cookies.remove('refresh')
               this.$refs.username.innerHTML = "로그인이 필요합니다."
               this.$refs.useremail.innerHTML = ""
+              this.is_login = false
             })
         } else {
           this.getUserinfo(Cookies.get('access'))

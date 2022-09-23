@@ -138,7 +138,7 @@ export default {
           "password": this.password,
           "name": this.name,
           "email": this.email,
-          "address": this.address + this.address2,
+          "address": this.address + "$" + this.address2,
           "phone_number": this.phone_num,
           "subject": this.subject,
         }),
