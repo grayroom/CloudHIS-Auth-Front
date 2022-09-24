@@ -81,12 +81,10 @@ export default {
   methods: {
     login() {
       axios.post('/auth/api/user/login/',
-        JSON.stringify(
           {
             "username": this.username,
             "password": this.password,
-          }
-        ),
+          },
         {
           headers: {
             'Content-Type': 'application/json',

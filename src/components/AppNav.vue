@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="justify-between items-center w-full md:flex md:w-auto md:order-1 hidden" id="mobile-menu-2"
-        ref="mainMenu" aria-hidden>
+        ref="mainMenu" aria-hidden="true">
 
         <ul
           class="flex flex-col p-4 mt-4 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
@@ -114,22 +114,21 @@ export default {
     },
 
     logout() {
-      var refreshToken = Cookies.get('refresh')
-      var accessToken = Cookies.get('access')
+      const refreshToken = Cookies.get('refresh')
+      const accessToken = Cookies.get('access')
 
       axios.post('/auth/api/user/logout/',
-        JSON.stringify({
+        {
           "refresh": refreshToken
         }, {
           withCredentials: true,
           crossDomain: true,
           credentials: "access",
           headers: {
-            // Authorization: "Bearer " + Cookies.get('access')
-            Authorization: accessToken,
+            Authorization: "Bearer " + accessToken,
+            ContentType: "application/json"
           }
         })
-      )
         .then(() => {
           Cookies.remove('access')
           Cookies.remove('refresh')
@@ -191,13 +190,21 @@ export default {
       } else {
         this.is_login = true
 
-        const accessTokenJSON = JSON.parse(atob(accessToken.split('.')[1]));
-        if (new Date(accessTokenJSON.exp * 1000) < new Date()) {
+        // const accessTokenJSON = JSON.parse(atob(accessToken.split('.')[1]));
+        // if (new Date(accessTokenJSON.exp * 1000) < new Date()) {
           axios.post('/auth/api/token/refresh/',
-            JSON.stringify({
-              "refresh": refreshToken
-            }),
-          )
+              {
+                "refresh": refreshToken,
+              },
+            {
+              withCredentials: true,
+              crossDomain: true,
+              credentials: "access",
+              headers: {
+                Authorization: "Bearer " + accessToken,
+                ContentType: "application/json"
+              }
+            })
             .then((response) => {
               Cookies.remove('access')
               Cookies.remove('refresh')
@@ -213,9 +220,9 @@ export default {
               this.$refs.useremail.innerHTML = ""
               this.is_login = false
             })
-        } else {
-          this.getUserinfo(Cookies.get('access'))
-        }
+        // } else {
+        //   this.getUserinfo(Cookies.get('access'))
+        // }
       }
     }
   },
@@ -226,8 +233,8 @@ export default {
 <style>
 #user-dropdown {
   position: absolute;
-  inset: 0px auto auto 0px;
-  margin: 0px;
+  inset: 0 auto auto 0;
+  margin: 0;
   width: 170px;
   transform: translate3d(calc(100vw - 200px), 82px, 0px);
 }

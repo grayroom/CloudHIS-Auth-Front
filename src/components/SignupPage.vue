@@ -133,7 +133,7 @@ export default {
       }
 
       axios.post('/auth/api/user/signup/',
-        JSON.stringify({
+        {
           "username": this.alias,
           "password": this.password,
           "name": this.name,
@@ -141,7 +141,7 @@ export default {
           "address": this.address + "$" + this.address2,
           "phone_number": this.phone_num,
           "subject": this.subject,
-        }),
+        },
         {
           headers: {
             'Content-Type': 'application/json',
