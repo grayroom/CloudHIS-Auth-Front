@@ -49,7 +49,7 @@
             </button>
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
               아직 계정이 없으시다면
-              <router-link to="/auth/home/signup"
+              <router-link to="/auth/signup"
                            class="font-medium text-primary-600 hover:underline dark:text-primary-500">
                 여기를 클릭
               </router-link>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+  <div class="flex flex-col items-center justify-center p-5 mx-auto lg:py-0">
     <div class='md:h-screen w-full sm:max-w-2xl'>
       <div class="relative z-0 mb-6 w-full group">
         <input type="text" name="floating_name" id="floating_name"
@@ -121,6 +121,7 @@ export default {
             crossDomain: true,
             credentials: "access",
             headers: {
+              'Content-Type': 'application/json',
               Authorization: "Bearer " + accessToken,
             }
           })
