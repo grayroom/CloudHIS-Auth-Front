@@ -1,5 +1,59 @@
 <template>
   <div class='max-w-[48rem] min-w-[18rem] mx-auto'>
+    <h1 class="py-2.5 text-lg dark:text-white">회원구분</h1>
+
+    <div id="selector" class="py-2.5 flex flex-row gap-5">
+      <button v-on:click="patientMode"
+        class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
+        <span v-if="mode == 'patient'"
+          class="relative px-5 py-2.5 transition-all ease-in duration-75rounded-md bg-opacity-0">
+          환자
+        </span>
+        <span v-else
+          class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+          환자
+        </span>
+      </button>
+      <button v-on:click="doctorMode"
+        class="relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br to-purple-600 from-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
+        <span v-if="mode == 'doctor'"
+          class="relative px-5 py-2.5 transition-all ease-in duration-75 rounded-md bg-opacity-0">
+          의료진
+        </span>
+        <span v-else
+          class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+          의료진
+        </span>
+      </button>
+    </div>
+
+    <div class="grid md:grid-cols-2 md:gap-6" v-if="mode == 'doctor'">
+      <div class="relative z-0 mb-6 w-full group">
+        <input type="text" name="floating_subject" id="floating_subject"
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+          placeholder=" " required="" v-model="subject">
+        <label for="floating_subject" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400
+                        duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600
+                        peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
+                        peer-focus:scale-75 peer-focus:-translate-y-6">
+          진료과목
+        </label>
+      </div>
+
+      <div class="relative z-0 mb-6 w-full group">
+        <input type="text" name="floating_subject" id="floating_subject"
+          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+          placeholder=" " required="" v-model="subject">
+        <label for="floating_subject" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400
+                              duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600
+                              peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
+                              peer-focus:scale-75 peer-focus:-translate-y-6">
+          직책
+        </label>
+      </div>
+    </div>
+
+    <h1 class="py-2.5 text-lg dark:text-white">기본정보</h1>
     <div class="relative z-0 mb-6 w-full group">
       <input type="text" name="floating_alias" id="floating_alias"
         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -50,27 +104,13 @@
         메일주소</label>
     </div>
 
-    <div class="grid md:grid-cols-2 md:gap-6">
-      <div class="relative z-0 mb-6 w-full group">
-        <input type="tel" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}" name="floating_phone" id="floating_phone"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" " required="" v-model="phone_num">
-        <label for="floating_phone"
-          class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-          전화번호 (123-456-7890)</label>
-      </div>
-
-      <div class="relative z-0 mb-6 w-full group">
-        <input type="text" name="floating_subject" id="floating_subject"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" " required="" v-model="subject">
-        <label for="floating_subject" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400
-                    duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600
-                    peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
-                    peer-focus:scale-75 peer-focus:-translate-y-6">
-          진료과목
-        </label>
-      </div>
+    <div class="relative z-0 mb-6 w-full group">
+      <input type="tel" pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}" name="floating_phone" id="floating_phone"
+        class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" " required="" v-model="phone_num">
+      <label for="floating_phone"
+        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+        전화번호 (123-456-7890)</label>
     </div>
 
     <div class="grid md:grid-cols-2 md:gap-6">
@@ -89,9 +129,9 @@
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           placeholder=" " required="" v-model="address2">
         <label for="floating_address2" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400
-                    duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600
-                    peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
-                    peer-focus:scale-75 peer-focus:-translate-y-6">
+                        duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600
+                        peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
+                        peer-focus:scale-75 peer-focus:-translate-y-6">
           주소2
         </label>
       </div>
@@ -122,6 +162,8 @@ export default {
       address2: '',
       phone_num: '',
       subject: '',
+
+      mode: "patient"
     }
   },
 
@@ -132,8 +174,19 @@ export default {
         return;
       }
 
-      axios.post('/auth/api/user/signup/',
-        {
+      let data
+      if (this.mode === "patient") {
+        data = {
+          "username": this.alias,
+          "password": this.password,
+          "name": this.name,
+          "email": this.email,
+          "address": this.address + "$" + this.address2,
+          "phone_number": this.phone_num,
+          "user_type": this.mode
+        }
+      } else {
+        data = {
           "username": this.alias,
           "password": this.password,
           "name": this.name,
@@ -141,7 +194,11 @@ export default {
           "address": this.address + "$" + this.address2,
           "phone_number": this.phone_num,
           "subject": this.subject,
-        },
+          "user_type": this.mode
+        }
+      }
+
+      axios.post('/auth/api/user/signup/', data,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -161,6 +218,18 @@ export default {
           }
         });
     },
+
+    patientMode() {
+      this.mode = "patient"
+      console.log(this.mode)
+      this.$forceUpdate()
+    },
+
+    doctorMode() {
+      this.mode = "doctor"
+      console.log(this.mode)
+      this.$forceUpdate()
+    }
   }
 }
 </script>

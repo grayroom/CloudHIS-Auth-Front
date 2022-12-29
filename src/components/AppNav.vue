@@ -1,7 +1,7 @@
 <template>
 	<nav class="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900">
 		<div class="container flex flex-wrap justify-between items-center mx-auto">
-			<router-link to="/auth/home" class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+			<router-link to="/auth/home" class="p-3 self-center text-xl font-semibold whitespace-nowrap dark:text-white">
 				CloudHIS / AUTH
 			</router-link>
 			<div class="flex items-center md:order-2 gap-2">
@@ -35,7 +35,7 @@
 					class="z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 hidden cursor-pointer select-none border border-gray-500"
 					id="user-dropdown" ref="userMenu" aria-hidden="true">
 					<div class="py-3 px-4">
-						<span class="block text-sm text-gray-900 dark:text-white" ref="username"></span>
+						<span class="block text-sm text-gray-900 dark:text-white" ref="name"></span>
 						<span class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400" ref="useremail"></span>
 					</div>
 					<ul v-if="is_login" class="py-1" aria-labelledby="user-menu-button">
@@ -100,7 +100,6 @@
 <script>
 import axios from 'axios'
 import Cookies from 'js-cookie'
-// import eventHub from './eventHub';
 
 
 export default {
@@ -118,13 +117,9 @@ export default {
 		},
 
 		logout() {
-			const refreshToken = Cookies.get('refresh')
 			const accessToken = Cookies.get('access')
 
-			axios.post('/auth/api/user/logout/',
-				{
-					"refresh": refreshToken
-				}, {
+			axios.post('/auth/api/user/logout/', {}, {
 				withCredentials: true,
 				crossDomain: true,
 				credentials: "access",
@@ -137,10 +132,7 @@ export default {
 					Cookies.remove('access')
 					Cookies.remove('refresh')
 					this.toggleUserMenu()
-					this.is_login = false
-					this.$refs.username.innerHTML = "로그인이 필요합니다."
-					this.$refs.useremail.innerHTML = ""
-					alert('로그아웃 되었습니다.')
+					this.$store.commit('logout')
 					this.$router.go('/auth/home');
 				})
 				.catch((error) => {
@@ -160,13 +152,13 @@ export default {
 				})
 				.then((response) => {
 					console.log(response.data)
-					this.$refs.username.innerHTML = response.data.name
+					this.$refs.name.innerHTML = response.data.name
 					this.$refs.useremail.innerHTML = response.data.email
 				})
 				.catch(() => {
 					Cookies.remove('access')
 					Cookies.remove('refresh')
-					this.$refs.username.innerHTML = "로그인이 필요합니다."
+					this.$refs.name.innerHTML = "로그인이 필요합니다."
 					this.$refs.useremail.innerHTML = ""
 					this.is_login = false
 				})
@@ -184,61 +176,15 @@ export default {
 		// TODO: 토큰이 있다면, 토큰이 만료되었는지 여부를 확인하고,,, refresh token까지 만료된 경우에는
 		// 로그아웃을 시키고,,, access token만 만료된 경우에는 refresh token으로 access token을 재발급 받아야함
 		$route(to, from) {
-			this.is_login = false
-
-			if (to.path !== from.path)
-				console.log('route changed')
-			const accessToken = Cookies.get('access');
-			const refreshToken = Cookies.get('refresh');
-
-			if (accessToken === undefined || refreshToken === undefined) {
-				this.$refs.username.innerHTML = "로그인이 필요합니다."
-				this.$refs.useremail.innerHTML = ""
-				this.is_login = false
-				Cookies.remove('access')
-				Cookies.remove('refresh')
-			} else {
-				this.is_login = true
-				const accessTokenJSON = JSON.parse(atob(accessToken.split('.')[1]));
-
-				if (accessTokenJSON.authority >= 2) {
-					this.is_admin = true
-				}
-
-				if (new Date(accessTokenJSON.exp * 1000) < new Date()) {
-					axios.post('/auth/api/token/refresh/',
-						{
-							"refresh": refreshToken,
-						},
-						{
-							withCredentials: true,
-							crossDomain: true,
-							credentials: "access",
-							headers: {
-								Authorization: "Bearer " + accessToken,
-								ContentType: "application/json"
-							}
-						})
-						.then((response) => {
-							Cookies.remove('access')
-							Cookies.remove('refresh')
-							Cookies.set('access', response.data.access)
-							Cookies.set('access', response.data.refresh)
-							this.getUserinfo(response.data.access)
-						})
-						.catch(() => {
-							// NOTE: token validation failed...
-							Cookies.remove('access')
-							Cookies.remove('refresh')
-							this.$refs.username.innerHTML = "로그인이 필요합니다."
-							this.$refs.useremail.innerHTML = ""
-							this.is_login = false
-						})
-				} else {
-					this.getUserinfo(Cookies.get('access'))
-				}
+			if (to.path !== from.path) {
+				this.is_login = this.$store.getters.getName != ""
+				this.$refs.name.innerHTML = this.$store.getters.getName == "" ? "로그인이 필요합니다." : this.$store.getters.getName
+				this.$refs.useremail.innerHTML = this.$store.getters.getEmail == "" ? "" : this.$store.getters.getEmail
 			}
+
+			this.$forceUpdate()
 		}
+
 	},
 }
 
