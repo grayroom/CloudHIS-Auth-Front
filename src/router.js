@@ -28,9 +28,4 @@ const router = new VueRouter({
   routes: route,
 });
 
-// router.beforeEach((to, from, next) => {
-//   store.commit('tokenCheck');
-//   return next();
-// });
-
 export default router;
