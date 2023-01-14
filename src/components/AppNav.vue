@@ -42,13 +42,13 @@
 						<li @click="toggleUserMenu">
 							<router-link to="/auth/info"
 								class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-								정보수정
+								My Profile
 							</router-link>
 						</li>
 						<li>
 							<a class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
 								@click="logout">
-								로그아웃
+								LogOut
 							</a>
 						</li>
 					</ul>
@@ -56,7 +56,7 @@
 						<li @click="toggleUserMenu">
 							<router-link to="/auth/login"
 								class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-								로그인
+								LogIn
 							</router-link>
 						</li>
 					</ul>
@@ -68,26 +68,26 @@
 				<ul v-if="is_login"
 					class="flex flex-col p-4 mt-4 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
 					<li>
-						<a href="#"
+						<a href="/auth/"
 							class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-							aria-current="page">메인페이지</a>
+							aria-current="page">Main</a>
 					</li>
-					<li>
+					<li v-if="!is_patient">
 						<a href="/emr/"
 							class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
 							EMR
 						</a>
 					</li>
+					<li v-else>
+						<a href="/emr/myrecord"
+							class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+							My-Record
+						</a>
+					</li>
 					<li v-if="is_admin">
 						<a href="/admin/"
 							class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-							관리자
-						</a>
-					</li>
-					<li v-else>
-						<a href="/plan/"
-							class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-							일정
+							Admin
 						</a>
 					</li>
 				</ul>
@@ -158,7 +158,7 @@ export default {
 				.catch(() => {
 					Cookies.remove('access')
 					Cookies.remove('refresh')
-					this.$refs.name.innerHTML = "로그인이 필요합니다."
+					this.$refs.name.innerHTML = "login needed"
 					this.$refs.useremail.innerHTML = ""
 					this.is_login = false
 				})
@@ -178,7 +178,8 @@ export default {
 		$route(to, from) {
 			if (to.path !== from.path) {
 				this.is_login = this.$store.getters.getName != ""
-				this.$refs.name.innerHTML = this.$store.getters.getName == "" ? "로그인이 필요합니다." : this.$store.getters.getName
+				this.is_patient = this.$store.getters.getUserType == "patient"
+				this.$refs.name.innerHTML = this.$store.getters.getName == "" ? "login needed" : this.$store.getters.getName
 				this.$refs.useremail.innerHTML = this.$store.getters.getEmail == "" ? "" : this.$store.getters.getEmail
 			}
 

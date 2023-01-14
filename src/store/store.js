@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import router from '@/router.js';
 import creatPersistedState from 'vuex-persistedstate';
 
 import axios from 'axios';
@@ -14,6 +13,7 @@ const store = new Vuex.Store({
     name: '',
     email: '',
     authority: '',
+    user_type: '',
     is_login: false,
   },
   mutations: {
@@ -25,28 +25,28 @@ const store = new Vuex.Store({
       state.name = accessTokenJSON.name;
       state.email = accessTokenJSON.email;
       state.authority = accessTokenJSON.authority;
+      state.user_type = accessTokenJSON.user_type;
       state.is_login = true;
 
-      alert('로그인 성공');
-      router.push('/').then((r) => r);
+      alert('login success');
+      location.href = '/';
     },
     adminCheck: function (state) {
       if (state.authority !== '2') {
-        alert('관리자만 접근 가능합니다.');
-        router.push('/').then((r) => r);
+        alert('invalid authority');
+        location.href = '/';
       }
     },
     tokenCheck: function (state) {
       const accessToken = Cookies.get('access');
       const refreshToken = Cookies.get('refresh');
 
-      if (
-        accessToken == undefined ||
-        refreshToken == undefined ||
-        state.authority < 0
-      ) {
-        alert('로그인이 필요합니다.');
-        router.push('/auth/login').then((r) => r);
+      if (accessToken == undefined || refreshToken == undefined) {
+        alert('please login');
+        location.href = '/auth';
+      } else if (state.authority < 0) {
+        alert('not approved user');
+        location.href = '/auth';
       } else {
         const accessTokenJSON = JSON.parse(atob(accessToken.split('.')[1]));
         if (new Date(accessTokenJSON.exp * 1000) < new Date()) {
@@ -80,8 +80,8 @@ const store = new Vuex.Store({
               Cookies.remove('access');
               Cookies.remove('refresh');
 
-              alert('로그아웃 되었습니다.');
-              router.push('/auth/login').then((r) => r);
+              alert('logout success');
+              location.href = '/auth/login';
             });
         }
       }
@@ -94,8 +94,8 @@ const store = new Vuex.Store({
       Cookies.remove('access');
       Cookies.remove('refresh');
 
-      alert('로그아웃 성공');
-      router.push('/').then((r) => r);
+      alert('logout success');
+      location.href = '/';
     },
   },
   getters: {
@@ -107,6 +107,9 @@ const store = new Vuex.Store({
     },
     getAuthority: function (state) {
       return state.authority;
+    },
+    getUserType: function (state) {
+      return state.user_type;
     },
   },
   actions: {},
